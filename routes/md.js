@@ -1,6 +1,8 @@
 const Joi = require("joi")
 const express = require("express")
 const {createFile,getFileNames,readFile, mdFolder,updateFile,deleteFile} = require("../custom_module/custom_fs")
+const fs = require("fs")
+ 
 const routes = express.Router()
 
 const schema = Joi.object({
@@ -46,20 +48,23 @@ const schema = Joi.object({
       return;
     }
     let fileName = req.body.fileName.toLowerCase();
-
     let isPresent = await isValuePresent(fileName);
-    
+     
     if(isPresent){
       res.status(400).send("File Already Exits");
       return
     }
         
       try{
-       const responseData = await createFile(fileName);
-       res.send({fileName:req.body.fileName});
+       await createFile(fileName);
+       
+       const { birthtime } = fs.statSync(mdFolder+"/"+fileName)
+        
+       res.send({fileName:fileName,createdOn:birthtime});
        return;
       }
-      catch{
+      catch (err){
+        console.log(err)
        res.status(404).send("Some Issue in creating File")
        return
       }
