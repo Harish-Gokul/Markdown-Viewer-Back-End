@@ -1,6 +1,6 @@
 const Joi = require("joi")
 const express = require("express")
-const {createFile,getFileNames,readFile, mdFolder,updateFile,deleteFile} = require("../custom_module/custom_fs")
+const {createFile,getFileNames,readFile,renameFile, mdFolder,updateFile,deleteFile} = require("../custom_module/custom_fs")
 const fs = require("fs")
  
 const routes = express.Router()
@@ -74,9 +74,39 @@ const schema = Joi.object({
 
 
   })
+
+
+ routes.put("/api/MD_Files/rename",async (req,res)=>{
+  
+  const {err} = schema.validate(req.body)
+    if(err || req.body.fileName==undefined ||req.body.newName==undefined  ){
+      res.status(400).send(err|| "Chek the fileName or rename Value");
+      return;
+    }
+    let fileName = req.body.fileName.toLowerCase();
+    let newName = req.body.newName.toLowerCase();
+    let isPresent = await isValuePresent(fileName);
+    let newNameIsPresent = await isValuePresent(newName) 
+    if(newNameIsPresent) { res.status(400).send(`file already exits with name '${newName}' `)
+  return
+  }
+    if(!isPresent){
+      res.status(404).send("File Not Found")
+      return;
+    }
+    try{
+      let result = await renameFile(fileName,newName);
+       console.log(result)
+      let fileContent = await readFile(newName)
+      res.send({fileName:newName,content:fileContent})
+    }
+    catch (err){
+      res.status(500).send({err:err,msg:"Some Issue in creating File"})
+    }
+ })
+
   routes.put("/api/MD_Files/",async (req,res)=>{
     
-  
     const {err} = schema.validate(req.body)
     if(err || req.body.fileName==undefined ||req.body.content==undefined  ){
       res.status(400).send(err|| "Chek the fileName or content");

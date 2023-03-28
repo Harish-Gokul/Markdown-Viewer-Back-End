@@ -67,6 +67,18 @@ function readFile(fileName){
   return promise;
 }
 
+function renameFile(fileName,newName){
+  const promise = new Promise((resolve,reject)=>{
+    fs.rename(`${mdFolder}/${fileName}`, `${mdFolder}/${newName}`,(err,file)=>{
+      if(err) return reject(err);
+       
+      resolve(newName)
+    })
+  })
+  return promise;
+}
+ 
+
  
 function deleteFile(fileName){
   const target = mdFolder+"/"+fileName;
@@ -85,4 +97,5 @@ module.exports.getFileNames =getFileNames;
 module.exports.readFile = readFile;
 module.exports.updateFile = updateFile;
 module.exports.deleteFile = deleteFile;
+module.exports.renameFile = renameFile
 module.exports.mdFolder =mdFolder;
