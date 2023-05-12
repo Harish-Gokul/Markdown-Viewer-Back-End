@@ -1,6 +1,6 @@
 # Backend for Notes via Markdown application
 
-It a simple notes application with a markdown syntax and it's inspired from Github Readme.md. This node application reads the Markdown Files from a directory  displays them in the web app.
+It a simple notes application with a markdown syntax and it's inspired from `Github Readme.md`. This node application reads the Markdown Files from a directory  displays them in the web app.
 
 You can Check out front-end by [Clicking here](https://github.com/Harish-Gokul/Markdown-Viewer-FrontEnd)
 
