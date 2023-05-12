@@ -1,4 +1,5 @@
 const Joi = require("joi")
+const _ = require("lodash")
 const express = require("express")
 const {createFile,getFileNames,readFile,renameFile, mdFolder,updateFile,deleteFile} = require("../custom_module/custom_fs")
 const fs = require("fs")
@@ -6,7 +7,9 @@ const fs = require("fs")
 const routes = express.Router()
 
 const schema = Joi.object({
-    fileName : Joi.string().min(3).required()
+    fileName : Joi.string().min(3).required(),
+    content : Joi.string(),
+    newName : Joi.string()
   })
   
   
@@ -16,7 +19,7 @@ const schema = Joi.object({
     res.send(fileNames)
   } 
   catch{
-    res.status(404).send("files Not Found")
+    res.status(404).send({msg:"files Not Found"})
   }
   }) 
 
@@ -31,27 +34,27 @@ const schema = Joi.object({
        return;
       }
       catch{
-       res.status(404).send("File Not Found")
+       res.status(404).send({msg:"File Not Found"})
        return
       }
     }
-    res.status(400).send("Enter a Valid argument")
+    res.status(400).send({msg:"Enter a Valid argument"})
   })
   
   
   routes.post("/api/MD_Files/", async(req,res)=>{
     //checking if the file is present 
     
-    const {err} = schema.validate(req.body)
-    if(err || req.body.fileName==undefined){
-      res.status(400).send(err|| "Chek the key");
+    const {error} = schema.validate(req.body)
+    if(error){
+      res.status(400).send(_.pick(error,["message"]));
       return;
     }
     let fileName = req.body.fileName.toLowerCase();
     let isPresent = await isValuePresent(fileName);
      
     if(isPresent){
-      res.status(400).send("File Already Exits");
+      res.status(400).send({msg:"File Already Exits"});
       return
     }
         
@@ -63,13 +66,10 @@ const schema = Joi.object({
        res.send({fileName:fileName,createdOn:birthtime});
        return;
       }
-      catch (err){
-        console.log(err)
-       res.status(404).send("Some Issue in creating File")
+      catch (err){ 
+       res.status(404).send({msg:"Some Issue in creating File"})
        return
-      }
-   
-    res.status(400).send("Ombu tha");
+      } 
 
 
 
@@ -77,26 +77,28 @@ const schema = Joi.object({
 
 
  routes.put("/api/MD_Files/rename",async (req,res)=>{
-  
-  const {err} = schema.validate(req.body)
-    if(err || req.body.fileName==undefined ||req.body.newName==undefined  ){
-      res.status(400).send(err|| "Chek the fileName or rename Value");
+ 
+   
+  const {error} = schema.validate(req.body)
+
+    if(error||req.body.newName==undefined){
+      res.status(400).send({msg:error|| "check the newName in ReqBody"});
       return;
     }
     let fileName = req.body.fileName.toLowerCase();
     let newName = req.body.newName.toLowerCase();
     let isPresent = await isValuePresent(fileName);
     let newNameIsPresent = await isValuePresent(newName) 
-    if(newNameIsPresent) { res.status(400).send(`file already exits with name '${newName}' `)
+    if(newNameIsPresent) { res.status(400).send({msg:`file already exits with name '${newName}' `})
   return
   }
     if(!isPresent){
-      res.status(404).send("File Not Found")
+      res.status(404).send({msg:"File Not Found"})
       return;
     }
     try{
       let result = await renameFile(fileName,newName);
-       console.log(result)
+       
       let fileContent = await readFile(newName)
       res.send({fileName:newName,content:fileContent})
     }
@@ -107,9 +109,10 @@ const schema = Joi.object({
 
   routes.put("/api/MD_Files/",async (req,res)=>{
     
-    const {err} = schema.validate(req.body)
-    if(err || req.body.fileName==undefined ||req.body.content==undefined  ){
-      res.status(400).send(err|| "Chek the fileName or content");
+    
+    const {error} = schema.validate(req.body)
+    if(error  ||req.body.content==undefined  ){
+      res.status(400).send({msg: error|| "Check the content In req body"});
       return;
     }
     let fileName = req.body.fileName;
@@ -118,7 +121,7 @@ const schema = Joi.object({
     let isPresent = await isValuePresent(fileName);
     
     if(!isPresent){
-      res.status(400).send("File Not Found")
+      res.status(400).send({msg:"File Not Found"})
       return
     } 
     
@@ -128,7 +131,7 @@ const schema = Joi.object({
       return;
      }
      catch{
-      res.status(404).send("Some Issue in Updating File")
+      res.status(404).send({msg:"Some Issue in Updating File"})
       return
      }
   
@@ -140,20 +143,20 @@ const schema = Joi.object({
      
     const {err} = schema.validate(req.body)
     if(!fileName || err){
-      res.status(400).send("Enter a valid Query or Enter A valid FileName");
+      res.status(400).send({msg:"Enter a valid Query or Enter A valid FileName"});
       return
     }
     
     let isPresent = await isValuePresent(fileName);
 
     if(!isPresent){
-      res.status(404).send("File Not Found")
+      res.status(404).send({msg:"File Not Found"})
       return;
     }
 
     try{
       await deleteFile(fileName)
-      res.send("Deleted")
+      res.send({msg:"Deleted"})
     }
     catch{
       res.status(400).send(err)

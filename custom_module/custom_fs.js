@@ -22,7 +22,7 @@ function createFile(fileName){
  
 function updateFile(fileName,content){
   const target = mdFolder+"/"+fileName;
-  console.log(target)
+   
   const promise = new Promise((resolve,reject)=>{
     fs.writeFile(target,content,(err,files)=>{
       if(err){
