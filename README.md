@@ -24,7 +24,7 @@ Software Required
 
 **Method** - `GET`  
 **URL** - [http://localhost:3000/](http://localhost:3000/)
-```Javascrip
+```javascrip
 //Response Body
 [
     {
@@ -73,13 +73,13 @@ Software Required
 **Method** - `PUT`  
 **URL** - [http://localhost:3000/api/MD_Files/](http://localhost:3000/api/MD_Files/)
 ```javascript
-Request Body
+//Request Body
 {
     "fileName":"sample1.md",
     "content" : "#Hello"
 }
 
-Response body
+//Response body
 {
     "fileName":"sample1.md",
     "content" : "#Hello"
