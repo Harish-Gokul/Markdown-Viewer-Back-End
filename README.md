@@ -7,7 +7,7 @@ You can Check out front-end by [Clicking here](https://github.com/Harish-Gokul/M
 ### To start The server 
 ```bash
 npm i 
-npm index.js
+node index.js
 ```
 I have not included node_module folder, so `npm i` can install all the dependencies that i have used in my project 
 `npm index.js` will start the server in port 3000
