@@ -42,7 +42,7 @@ Software Required
 #### To Get a single file
 
 **Method** - `GET`  
-**URL** - [http://localhost:3000/api/MD_Files/?fileName=aptitude.md](http://localhost:3000/api/MD_Files/?fileName=mongodb.md)
+**URL** - [http://localhost:3000/api/MD_Files/?fileName=mongodb.md](http://localhost:3000/api/MD_Files/?fileName=mongodb.md)
 ```javascript
 //Response body 
 {
